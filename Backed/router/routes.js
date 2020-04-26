@@ -3,7 +3,8 @@ var funs = require('../router/funs.js');
 var api = require('../router/API_FUNC.js');
 var express = require('express');
 var path = require('path');
-
+var signup = require('./controller/user-signup');
+var login = require('./controller/user-login');
 // create our router object
 var router = express.Router();
 var d = new Date();
@@ -16,21 +17,23 @@ router.get('/', function(req, res, next) {
   res.send('Chat Server is running');
 });
 
-router.get('/login', function(req, res, next) {
-	DB_pool.getConnection(function(err, db) {
-		if (err) throw err; // not connected!
-		api.login(db,req.body.email,req.body.password,"req.Device","req.ipAddress",function(usr){
-			console.log(usr);
-			res.send(usr);
-		});
-		
-			
-
+router.get('/login', (req, res, next)=> {
+	DB_pool.getConnection((err, db)=> {
+		if (err) return res.json({"Error" : true, "Message" : "Connection Failed"});
+		if (req.body.email  &&  req.body.password){
+			api.login(db,req.body.email,req.body.password,"req.Device","req.ipAddress",(usr)=>{
+				res.send(usr);
+			});
+		 }
+		else{
+			return res.status(400).json({"Error" : true, "Message" : "User and Password is Required"})
+		}
 	});
-	
-	
   });
 
+
+  router.post('/api/signup',signup );
+  router.post('/api/login',login );
 
 
 //-----------------------------------------Socket.io--------------------------------------------------------------//

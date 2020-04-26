@@ -1,21 +1,24 @@
 var md5    = require('md5');
+var mysql   = require("mysql");
 var Promise = require("bluebird");
 const fs = Promise.promisifyAll(require('fs'));
 module.exports = {
-    login: function (db,email,password,Device,ipAddress,callback) {
+    login:  (db,email,password,Device,ipAddress,callback)=> {
         var st = "true";
         var now = new Date();
         var date = now.toLocaleDateString();
         var time = now.toLocaleTimeString();
         var datetime = date+"//"+time;
         var source = "Android";
-        var query1= "select * from log_in WHERE Email='"+email+"' and Password='"+md5(password)+"'";
+        var query = "SELECT * FROM ?? WHERE ??=? AND ??=?";
+        var table = ["log_in","Password",  md5(password), "Email", email];
+        query = mysql.format(query,table);
+
+
         var user = [];
         var idsforimg = [];
         var response = {};
-        
-        db.query(query1, function (err, result) {
-            console.log(query1);
+        db.query(query,  (err, result) =>{
                     if (err) throw err;
                         if(result.length > 0){
                             var usr = result[0].Id;
@@ -26,7 +29,6 @@ module.exports = {
                                     var logincount = logincount+1;
                                     var roomstojoin = [];
                                     var clientstoget = [];
-                            
                                 var query = "update log_in set LastLoginDateTime='"+datetime+"',CurrentStatus='"+st+"',CurrentLoginFrom='"+Device+"',LoginCount='"+logincount+"' where Email='"+email+"'";
                                 db.query(query, function (err, result){
                                     if (err) throw err;
@@ -212,32 +214,18 @@ CURRENT_SONG_UPDATE: function(socket,db,songName,userid,songAlbum,songArtist,son
                                       });
                                   
                               });
-                              
                           });
-                  
-                  
-                  
                       });
-                      
-                  
-                  
-
-              
           }else{
               console.log("user Doesnt exist");
           }
-          
-       
         });
 },
 userHistory:  function(socket,db,userid,name,password,profile){
-	  
+
     var user = [];
     var response = {};
-	
 	var query= "select * from user_accounts where Id= "+userid+"";
-
-	
 	db.query(query, function (err, result) {
 			if (err) throw err;
 			if(result.length > 0 ){
@@ -246,7 +234,6 @@ userHistory:  function(socket,db,userid,name,password,profile){
 					var response = {"error":"false","user":user,"message":"Fetched Successfully"};
 					socket.emit("PROFILE_RESPONSE",response);
 				}
-				
 				if(name || password){
 					if(name && name != result[0].Name)
 						{
@@ -254,12 +241,8 @@ userHistory:  function(socket,db,userid,name,password,profile){
 							db.query(query, function (err, result) {
 								if (err) throw err;
 								var response = {"error":"false","message":"Updated Successfully"};
-								
 							});
-							
-							
 						}
-						
 					if(password && password != result[0].Password)
 						{
 							query="update user_accounts set Password = '"+Password+"' Where Id = "+userid+"";
