@@ -2,10 +2,10 @@
   "name": "solo",
   "version": "1.0.0",
   "description": "The Social Media Player",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node emitter.js"
+    "start": "node server.js"
   },
   "author": "Nishant Tiwari",
   "license": "ISC",
