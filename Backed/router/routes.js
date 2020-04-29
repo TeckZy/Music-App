@@ -7,8 +7,6 @@ var signup = require('./controller/user-signup');
 var login = require('./controller/user-login');
 // create our router object
 var router = express.Router();
-var d = new Date();
-var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 // export our router
 module.exports = router;
 
@@ -34,43 +32,45 @@ router.get('/login', (req, res, next)=> {
 
   router.post('/api/signup',signup );
   router.post('/api/login',login );
+  router.use('*', function(req, res){
+	res.status(404).json({"Error" : true, "Message" : "Page Not Found"})
+  });
 
 
 //-----------------------------------------Socket.io--------------------------------------------------------------//
 //see if a user is connecting
 io.on('connection', function(socket,err) {
-if (err) throw err;
+if (err) return res.status(400).json({"Error" : true, "Message" : "Socket Connection Failed"})
 
-console.log('user connected');
 
-socket.on('join', function(username,email,password,gender,mobile) {
+// socket.on('join', function(username,email,password,gender,mobile) {
 	
-		DB_pool.getConnection(function(err, db) {
-			if (err) throw err; // not connected!
+// 		DB_pool.getConnection(function(err, db) {
+// 			if (err) throw err; // not connected!
 					
-				funs.registration(socket,db,username,email,password,gender,mobile);
+// 				funs.registration(socket,db,username,email,password,gender,mobile);
 			
-		});
+// 		});
 
 		
 
         
-    });
+//     });
 	
 //---------------------------------------Login---------------------------------------------------------------------------------//
 
-socket.on('Login', function(email,password,Device,ipAddress) {
- console.log('user login');
-	DB_pool.getConnection(function(err, db) {
-		if (err) throw err; // not connected!
+// socket.on('Login', function(email,password,Device,ipAddress) {
+//  console.log('user login');
+// 	DB_pool.getConnection(function(err, db) {
+// 		if (err) throw err; // not connected!
 		
-			funs.login(socket,db,email,password,Device,ipAddress);
+// 			funs.login(socket,db,email,password,Device,ipAddress);
 
-	});
+// 	});
 	
 
         
-});
+// });
 
 socket.on('DP_QUERY',function(idsforimg){
 	

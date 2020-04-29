@@ -138,7 +138,7 @@ module.exports = {
   });
 },
 CURRENT_SONG_UPDATE: function(socket,db,songName,userid,songAlbum,songArtist,songDuration){
-    var now = new Date();
+  var now = new Date();
   var date = now.toLocaleDateString();
   var time = now.toLocaleTimeString();
   var datetime = date+"//"+time;

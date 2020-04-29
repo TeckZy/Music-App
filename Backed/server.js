@@ -25,8 +25,10 @@ var DB_pool = mysql.createPool({
 });
 global.DB_pool = DB_pool;
 app.use(session({secret: 'ssshhhhh',saveUninitialized: true,resave: true}));
+
 app.use(bodyParser.json());      
 app.use(bodyParser.urlencoded({extended: true}));
+
 // set static files (css and images, etc) location
 app.use(express.static(__dirname + '/public'));
 
@@ -55,13 +57,13 @@ app.use(client_device);
 app.use(auth);
 
 app.use('/', router);
+
+
 app.use('/port', function(req, res, next) {
   res.send('Chat Server is running on port '+port);
 });
 
-
-
-
+//for 404 Request
 
 
 
