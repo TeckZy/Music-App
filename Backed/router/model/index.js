@@ -15,14 +15,11 @@ const sequelize = new Sequelize(CODE.SQL_DB, CODE.SQL_USER, CODE.SQL_PASSWORD, {
   });
 
 var db = {};
-// console.log(sequelize, __dirname)
-
 fs.readdirSync(__dirname)
   .filter(function(file) {
     return file.indexOf(".") !== 0 && file !== "index.js";
   })
   .forEach(function(file) {
-      console.log(file);
     var model = sequelize.import(path.join(__dirname, file));
     db[model.name] = model;
   });
@@ -36,8 +33,6 @@ Object.keys(db).forEach(function(modelName) {
 
 //Custom Relation
 db.User.hasMany(db.Auth);
-
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-
 module.exports = db;

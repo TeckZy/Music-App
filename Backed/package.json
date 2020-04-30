@@ -23,10 +23,11 @@
     "mysql2": "^2.1.0",
     "sequelize": "^5.21.7",
     "serve": "^10.0.0",
-    "socket.io": "^2.1.1"
+    "socket.io": "^2.1.1",
+    "swagger-ui-express": "^4.1.4",
+    "jsonwebtoken": "^8.5.1"
   },
   "devDependencies": {
-    "jsonwebtoken": "^8.5.1",
     "nodemon": "^1.19.4"
   }
 }
