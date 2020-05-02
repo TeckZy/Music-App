@@ -6,9 +6,9 @@ var signup = require("./controller/user-signup");
 var login = require("./controller/user-login");
 var logout = require("./controller/logout");
 
-router.use(client_device);
+// router.use(client_device);
 router.post("/signup", signup);
-router.post("/login", login);
+router.post("/login", client_device, login);
 router.post("/logout", logout);
 router.get("*", (req, res) => {
   res.status(404).json({ error: "true", message: "Seems A Wrong Path" });

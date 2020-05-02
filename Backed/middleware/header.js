@@ -1,7 +1,7 @@
 module.exports = function (req, res, next) {
   const token = req.header("x-auth-token");
   const client = req.header("client-token");
-  console.log(JSON.stringify(req.headers));
+  console.log(JSON.stringify(req.header));
 
   if (!client)
     return res.status(401).json({
