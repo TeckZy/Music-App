@@ -4,6 +4,7 @@ const db = require("./../model/index");
 const CODE = require("../utils//constants");
 const jwt = require("jsonwebtoken");
 const md5 = require("md5");
+const io = require("./../../socket").getIO();
 
 function validate(req) {
   const schema = {
@@ -85,9 +86,9 @@ async function newUserLogin(user, req) {
     const token = user.generateAuthToken();
     const auth = await db.Auth.build({
       access_token: token,
-      device_token: "req.client",
-      device_type: "android",
-      ip_address: "1111",
+      device_token: req.client,
+      device_type: req.device,
+      ip_address: req.ip,
       user_id: user.id,
     });
     await auth.save();

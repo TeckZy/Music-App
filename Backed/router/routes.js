@@ -5,6 +5,7 @@ var client_device = require("../middleware/header");
 var signup = require("./controller/user-signup");
 var login = require("./controller/user-login");
 var logout = require("./controller/logout");
+var io = require("./../socket").getIO();
 
 // router.use(client_device);
 router.post("/signup", signup);
@@ -18,7 +19,7 @@ module.exports = router;
 io.on("connection", function (socket, err) {
   if (err) throw err;
 
-  console.log("user connected");
+  console.log("user connected", socket.request);
 
   socket.on("join", function (username, email, password, gender, mobile) {
     DB_pool.getConnection(function (err, db) {
