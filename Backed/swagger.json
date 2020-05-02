@@ -59,28 +59,27 @@
 		"/login": {
 			"parameters": [
 				{
-					"email": "emal@gmai.com",
-					"password": "**********",
-					"description": "Enter id password to Login",
-					"type": "string"
+					"name": "Signup",
+					"in": "body",
+					"description": "User that we want to create",
+					"schema": {
+						"$ref": "#/definitions/Login"
+					}
 				}
 			],
 			"post": {
 				"tags": [
-					"Users"
+					"Login"
 				],
-				"summary": "Get user with given ID",
+				"summary": "Get Auth Token ",
 				"responses": {
 					"200": {
-						"description": "User is found"
+						"description": "Auth Token in Responce"
 					}
 				}
 			}
 		},
 		"/logout": {
-			"parameters": [
-				{}
-			],
 			"post": {
 				"tags": [
 					"Users"
@@ -104,9 +103,11 @@
 				"_id"
 			],
 			"properties": {
-				"_id": {
-					"type": "string",
-					"uniqueItems": true
+				"device_type": {
+					"type": "string"
+				},
+				"mobile": {
+					"type": "string"
 				},
 				"email": {
 					"type": "string",
