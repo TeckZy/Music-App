@@ -61,7 +61,7 @@ var router = require("./router/routes");
 app.use(logger);
 app.use(auth);
 
-app.get("/", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/v1/", router);
 app.get("*", (req, res) => {
   res.status(404).json({ error: "true", message: "Seems A Wrong Path" });
