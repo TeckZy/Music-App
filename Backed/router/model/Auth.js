@@ -2,35 +2,43 @@
 // class User extends Model { }
 const jwt = require("jsonwebtoken");
 module.exports = (sequelize, DataTypes) => {
-const Auth = sequelize.define('Auth',{
-    id: {
+  const Auth = sequelize.define(
+    "Auth",
+    {
+      id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
-        primaryKey: true
-    },
-    user_id:{
+        primaryKey: true,
+      },
+      user_id: {
         type: DataTypes.STRING(255),
         allowNull: false,
-
-    },
-    access_token: {
+      },
+      access_token: {
         type: DataTypes.STRING(255),
-    },
-    device_token: {
+      },
+      device_token: {
         type: DataTypes.STRING(255),
-    },
-    device_type: {
-        type: DataTypes.ENUM('ios', 'android', 'web'),
-    },
-    ip_address: {
+      },
+      device_type: {
+        type: DataTypes.ENUM("ios", "android", "web"),
+      },
+      ip_address: {
         type: DataTypes.STRING(255),
+      },
     },
-},{
-    freezeTableName: true,
-    timestamps: false,
-    underscored: true
-  })
+    {
+      freezeTableName: true,
+      timestamps: false,
+      underscored: true,
+    }
+  );
+  Auth.associate = function (models) {
+    Auth.belongsTo(models.User, {
+      foreignKey: "user_id",
+      as: "user",
+    });
+  };
 
-return Auth;
-
-}
+  return Auth;
+};

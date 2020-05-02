@@ -1,72 +1,99 @@
 const Joi = require("joi");
 const db = require("./../model/index");
 
-const  CODE =  require('../utils//constants')
+const CODE = require("../utils//constants");
 const jwt = require("jsonwebtoken");
-const md5 = require('md5');
-
-
+const md5 = require("md5");
+const io = require("./../../socket").getIO();
 
 function validate(req) {
   const schema = {
-    email: Joi.string()
-      .min(5)
-      .max(255)
-      .required(),
-    password: Joi.string()
-      .min(5)
-      .max(255)
-      .required()
+    email: Joi.string().min(5).max(255).required(),
+    password: Joi.string().min(5).max(255).required(),
   };
 
   return Joi.validate(req, schema);
 }
 
-const Login  =   async (req, res) => {
+const Login = async (req, res) => {
+  const { error } = validate(req.body);
 
-const { error } = validate(req.body);
-
-if (error) return res.status(400).send({"error":"true","message":error.details[0].message});
+  if (error)
+    return res
+      .status(400)
+      .send({ error: "true", message: error.details[0].message });
 
   const user = await db.User.findOne({
     where: {
       email: req.body.email,
       password: md5(req.body.password),
-    }
+    },
+    include: ["auth"],
   });
+  if (!user)
+    return res
+      .status(400)
+      .send({ error: "true", message: "Invalid Email Or Password" });
 
-  if (!user ) return res.status(400).send({"error":"true","message":"Invalid Email Or Password"});
-
-
-  const token = user.access_token;
-
-  if(!token){
-   return generateNewToken(user);
+  if (user.auth.length > 0) {
+    token = await oldUserLogin(user, req);
+    return token ? success(token) : ISR();
+  } else {
+    token = await newUserLogin(user, req);
+    return token ? success(token) : ISR();
   }
 
-  try {
-    jwt.verify(token,CODE.JWT_SECRET,(err ,decoded)=>{
-      if(!err)   {
-        return res.status(200).send({"error":"true","message":"Login Successfull",'body':{'token':token}});
-        }else { 
-          return  generateNewToken(user);
-      }
-    })
-
-  } catch(e) {
-    return res.status(400).send({"error":"true","message":"Token Expired"});
+  function success(token) {
+    return res.status(200).send({
+      error: "false",
+      message: "Login Successfull",
+      body: { token: token },
+    });
   }
-
-
-  async function  generateNewToken(user){
-    const token = user.generateAuthToken();
-    user.access_token = token;
-    user.device_token =  req.header('client-token');
-    await user.save({ fields: ['access_token','device_token'] });
-    await user.reload();
-    return   res.status(200).send({"error":"false","message":"Login Successfull",'body':{'token': user.access_token }});
-}
-
-}
+  function ISR() {
+    return res.status(500).send({
+      error: "false",
+      message: "Internal Server Error [LF]",
+    });
+  }
+};
 
 module.exports = Login;
+
+async function oldUserLogin(user, req) {
+  const [first] = user.auth.slice(0, 1);
+  try {
+    return jwt.verify(
+      first.access_token,
+      CODE.JWT_SECRET,
+      async (err, decoded) => {
+        if (!err) return first.access_token;
+        else {
+          first.access_token = user.generateAuthToken();
+          first.device_token = req.header("client-token");
+          await first.save();
+          console.log(first.access_token);
+          return first.access_token;
+        }
+      }
+    );
+  } catch (e) {
+    return null;
+  }
+}
+async function newUserLogin(user, req) {
+  try {
+    const token = user.generateAuthToken();
+    const auth = await db.Auth.build({
+      access_token: token,
+      device_token: req.client,
+      device_type: req.device,
+      ip_address: req.ip,
+      user_id: user.id,
+    });
+    await auth.save();
+    return token;
+  } catch (e) {
+    return false;
+  }
+}
