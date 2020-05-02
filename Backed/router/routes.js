@@ -9,6 +9,9 @@ var login = require('./controller/user-login');
 router.use(client_device);
 router.post('/signup', signup);
 router.post('/login', login);
+router.get('*', (req, res) => {
+	res.status(404).json({ "error": "true", "message": "Seems A Wrong Path" });
+  });
 module.exports = router;
 
 io.on('connection', function (socket, err) {

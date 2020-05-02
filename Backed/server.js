@@ -22,13 +22,15 @@ var DB_pool = mysql.createPool({
 });
 global.DB_pool = DB_pool;
 app.use(session({ secret: 'ssshhhhh', saveUninitialized: true, resave: true }));
-try {
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: true }));
 
-}catch(e){
-  console.log("Land")
-}
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use((error, request, response, next) => {
+  if (error !== null && error instanceof SyntaxError && error.status === 400 && 'body' in error) {
+    return response.status(500).json({ "error": "true", "message": "Internal Server Error" });
+  }
+  return next();
+}); 
 
 app.use(express.static(__dirname + '/public'));
 
