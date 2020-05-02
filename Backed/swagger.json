@@ -1,123 +1,140 @@
 {
-    "swagger": "2.0",
-    "info": {
-      "version": "1.0.0",
-      "title": "Solo REST ",
-      "description": "Node js REST For SOLO APP",
-      "license": {
-        "name": "MIT",
-        "url": "https://opensource.org/licenses/MIT"
-      }
-    },
-    "host": "localhost:3000",
-    "basePath": "/api/v1",
-    "tags": [
-      {
-        "name": "Users",
-        "description": "API for users in the system"
-      }
-    ],
-    "schemes": [
-      "http"
-    ],
-    "consumes": [
-      "application/json"
-    ],
-    "produces": [
-      "application/json"
-    ],
-    "paths": {
-      "/signup": {
-        "post": {
-          "tags": [
-            "Users"
-          ],
-          "description": "Create new user in system",
-          "parameters": [
-            {
-              "name": "user",
-              "in": "body",
-              "description": "User that we want to create",
-              "schema": {
-                "$ref": "#/definitions/User"
-              }
-            }
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "New user is created",
-              "schema": {
-                "$ref": "#/definitions/User"
-              }
-            }
-          }
-        }
-      },
-      "/login": {
-        "parameters": [
-          {
-            "email": "emal@gmai.com",
-            "password":"**********",
-            "description": "Enter id password to Login",
-            "type": "string"
-          }
-        ],
-        "post": {
-          "tags": [
-            "Users"
-          ],
-          "summary": "Get user with given ID",
-          "responses": {
-            "200": {
-              "description": "User is found",
-              "schema": {
-                "$ref": "#/definitions/User"
-              }
-            }
-          }
-        }
-      }
-    },
-    "definitions": {
-      "Signup": {
-        "required": [
-          "email",
-          "_id"
-        ],
-        "properties": {
-          "_id": {
-            "type": "string",
-            "uniqueItems": true
-          },
-          "email": {
-            "type": "string",
-            "uniqueItems": true
-          },
-          "lastName": {
-            "type": "string"
-          },
-          "firstName": {
-            "type": "string"
-          }
-        }
-      },
-      "Login": {
-        "required": [
-          "email",
-          "passowrd"
-        ],
-        "properties": {
-          "email": {
-            "type": "string",
-            "uniqueItems": true
-          },
-          "password": {
-            "type": "string"
-          }
-        }
-      }
-    }
-  }
+	"swagger": "2.0",
+	"info": {
+		"version": "1.0.0",
+		"title": "Solo REST ",
+		"description": "Node js REST For SOLO APP",
+		"license": {
+			"name": "MIT",
+			"url": "https://opensource.org/licenses/MIT"
+		}
+	},
+	"host": "localhost:3000",
+	"basePath": "/api/v1",
+	"tags": [
+		{
+			"name": "Users",
+			"description": "API for users in the system"
+		}
+	],
+	"schemes": [
+		"http"
+	],
+	"consumes": [
+		"application/json"
+	],
+	"produces": [
+		"application/json"
+	],
+	"paths": {
+		"/signup": {
+			"post": {
+				"tags": [
+					"Users"
+				],
+				"description": "Create new user in system",
+				"parameters": [
+					{
+						"name": "Signup",
+						"in": "body",
+						"description": "User that we want to create",
+						"schema": {
+							"$ref": "#/definitions/Signup"
+						}
+					}
+				],
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "New user is created",
+						"schema": {
+							"$ref": "#/definitions/Signup"
+						}
+					}
+				}
+			}
+		},
+		"/login": {
+			"parameters": [
+				{
+					"name": "Signup",
+					"in": "body",
+					"description": "User that we want to create",
+					"schema": {
+						"$ref": "#/definitions/Login"
+					}
+				}
+			],
+			"post": {
+				"tags": [
+					"Login"
+				],
+				"summary": "Get Auth Token ",
+				"responses": {
+					"200": {
+						"description": "Auth Token in Responce"
+					}
+				}
+			}
+		},
+		"/logout": {
+			"post": {
+				"tags": [
+					"Users"
+				],
+				"summary": "Logout the Current Signed in User",
+				"responses": {
+					"200": {
+						"description": "Logout Successfull"
+					},
+					"404": {
+						"description": "You must be logged in to logout "
+					}
+				}
+			}
+		}
+	},
+	"definitions": {
+		"Signup": {
+			"required": [
+				"email",
+				"_id"
+			],
+			"properties": {
+				"device_type": {
+					"type": "string"
+				},
+				"mobile": {
+					"type": "string"
+				},
+				"email": {
+					"type": "string",
+					"uniqueItems": true
+				},
+				"lastName": {
+					"type": "string"
+				},
+				"firstName": {
+					"type": "string"
+				}
+			}
+		},
+		"Login": {
+			"required": [
+				"email",
+				"passowrd"
+			],
+			"properties": {
+				"email": {
+					"type": "string",
+					"uniqueItems": true
+				},
+				"password": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}
