@@ -4,13 +4,14 @@ var router = express.Router();
 var client_device = require("../middleware/header");
 var signup = require("./controller/user-signup");
 var login = require("./controller/user-login");
+var friends = require("./controller/friend-request");
 var logout = require("./controller/logout");
 var io = require("./../socket").getIO();
 
 // router.use(client_device);
 router.post("/signup", signup);
 router.post("/login", client_device, login);
-router.post('/sendRequest',client_device);
+router.post("/friends", client_device, friends);
 router.post("/logout", logout);
 router.get("*", (req, res) => {
   res.status(404).json({ error: "true", message: "Seems A Wrong Path" });
